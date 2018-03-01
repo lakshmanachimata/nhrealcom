@@ -1,13 +1,94 @@
 package com.nearhop.realcom;
 
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class MainActivity extends NHActivity {
+
+    WebSocketClient  mWebSocketClient;
+    EditText sendingText;
+    TextView messagesView;
+    ScrollView messagesScroll;
+    Button sendMsg;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sendingText = (EditText)findViewById(R.id.clientmessage);
+        messagesView = (TextView)findViewById(R.id.messages);
+        messagesScroll = (ScrollView)findViewById(R.id.messagesscroll);
+        sendMsg = (Button)findViewById(R.id.sendme);
+        sendMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage();
+            }
+        });
+        connectWebSocket();
     }
+
+    public void sendMessage() {
+        String textToSend = sendingText.getText().toString();
+        if(textToSend != null && textToSend.length() == 0){
+            Toast.makeText(getApplicationContext(),"Enter some text",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mWebSocketClient.send(textToSend);
+        messagesView.setText(messagesView.getText() + "\n" + textToSend);
+        sendingText.setText("");
+    }
+
+    private void connectWebSocket() {
+        URI uri;
+        try {
+            uri = new URI("ws://192.168.2.102:5857");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        mWebSocketClient = new WebSocketClient(uri) {
+            @Override
+            public void onOpen(ServerHandshake serverHandshake) {
+                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+            }
+
+            @Override
+            public void onMessage(String s) {
+                final String message = s;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        messagesView.setText(messagesView.getText() + "\n" + message);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose(int i, String s, boolean b) {
+                Log.i("Websocket", "Closed " + s);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.i("Websocket", "Error " + e.getMessage());
+            }
+        };
+        mWebSocketClient.connect();
+    }
+
 }

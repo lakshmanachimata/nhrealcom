@@ -18,10 +18,10 @@ wss.on('connection', function connection(ws, req) {
     // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
     ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
+        ws.send(message + "  from server");
     });
 
-    ws.send('something');
+
 });
 
 server.listen(5857, function listening() {
