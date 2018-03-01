@@ -48,7 +48,7 @@ public class MainActivity extends NHActivity {
             return;
         }
         mWebSocketClient.send(textToSend);
-        messagesView.setText(messagesView.getText() + "\n" + textToSend);
+        messagesView.setText(messagesView.getText() + "\n" +"CLIENT : " + textToSend);
         sendingText.setText("");
     }
 
@@ -64,7 +64,9 @@ public class MainActivity extends NHActivity {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                mWebSocketClient.send("HI");
+                messagesView.setText( "CLIENT : HI");
+
             }
 
             @Override
@@ -73,7 +75,7 @@ public class MainActivity extends NHActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        messagesView.setText(messagesView.getText() + "\n" + message);
+                        messagesView.setText(messagesView.getText() + "\n" + "SERVER : " +message);
                     }
                 });
             }
