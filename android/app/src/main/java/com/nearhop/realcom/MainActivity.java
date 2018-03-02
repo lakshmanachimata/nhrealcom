@@ -41,6 +41,10 @@ public class MainActivity extends NHActivity {
         connectWebSocket();
     }
 
+    public void sendFirstMessage() {
+        mWebSocketClient.send("nearhop_android");
+    }
+
     public void sendMessage() {
         String textToSend = sendingText.getText().toString();
         if(textToSend != null && textToSend.length() == 0){
@@ -64,9 +68,9 @@ public class MainActivity extends NHActivity {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                mWebSocketClient.send("HI");
-                messagesView.setText( "CLIENT : HI");
-
+//                mWebSocketClient.send("HI");
+//                messagesView.setText( "CLIENT : HI");
+                sendFirstMessage();
             }
 
             @Override

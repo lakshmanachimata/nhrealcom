@@ -12,7 +12,8 @@ import SwiftWebSocket
 class ViewController: UIViewController {
 
     var ws : WebSocket!
-    @IBOutlet weak var messagesText: UILabel!
+
+    @IBOutlet weak var messages: UITextView!
     @IBOutlet weak var sendMessage: UITextField!
     @IBOutlet weak var sendMe: UIButton!
     override func viewDidLoad() {
@@ -23,6 +24,8 @@ class ViewController: UIViewController {
         let stap = UITapGestureRecognizer(target: self, action: #selector(ViewController.sendMessageFromClient))
         sendMe.isUserInteractionEnabled = true
         sendMe.addGestureRecognizer(stap)
+        self.sendMessage.autocorrectionType = .no
+        self.messages.isEditable = false
         
     }
         // Do any additional setup after loading the view, typically from a nib.
@@ -41,11 +44,11 @@ class ViewController: UIViewController {
         ws = WebSocket("ws://192.168.2.102:5857")
         ws.event.open = {
             DispatchQueue.main.async() {
-                self.messagesText.text = "Hi\n";
+                self.messages.text = "Hi\n";
             }
             let when2 = DispatchTime.now() + 1
             DispatchQueue.main.asyncAfter(deadline: when2) {
-                self.sendMessageFromClient();
+                self.sendFirstMessage();
             }
         }
         ws.event.close = { code, reason, clean in
@@ -57,8 +60,13 @@ class ViewController: UIViewController {
         ws.event.message = { message in
             if let text = message as? String {
                 DispatchQueue.main.async() {
-                    self.messagesText.text =  self.messagesText.text! + text + "\n"
-                    var myText = self.messagesText.text;
+//                    self.messagesText.text =  self.messagesText.text! + text + "\n"
+                    var etext = self.messages.text;
+                    self.messages.text =  text + "\n"
+//                    self.messagesText.text = (self.messagesText.text ?? "") + text + "\n"
+//                    self.messagesText.numberOfLines = +1
+                    self.messages.text =  etext! + text + "\n"
+                    var myText = self.messages.text;
                     var a = 1;
                 }
             }
@@ -67,10 +75,14 @@ class ViewController: UIViewController {
     @objc func sendMessageFromClient(){
         DispatchQueue.main.async() {
             var enteredText =  self.sendMessage.text;
-            self.messagesText.text =  self.messagesText.text! + enteredText! + "\n"
+            self.messages.text =  self.messages.text! + enteredText! + "\n"
             self.sendMessage.text = ""
         }
         ws.send(self.sendMessage.text)
+    }
+    
+    func sendFirstMessage(){
+        ws.send("nearhop_ios")
     }
 }
 
