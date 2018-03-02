@@ -41,10 +41,10 @@ class ViewController: UIViewController {
     }
     
     func openWebSokcet(){
-        ws = WebSocket("ws://192.168.2.102:5857")
+        ws = WebSocket("ws://52.24.146.124:5857")
         ws.event.open = {
             DispatchQueue.main.async() {
-                self.messages.text = "Hi\n";
+                self.messages.text = "Connected\n";
             }
             let when2 = DispatchTime.now() + 1
             DispatchQueue.main.asyncAfter(deadline: when2) {
@@ -61,13 +61,13 @@ class ViewController: UIViewController {
             if let text = message as? String {
                 DispatchQueue.main.async() {
 //                    self.messagesText.text =  self.messagesText.text! + text + "\n"
-                    var etext = self.messages.text;
-                    self.messages.text =  text + "\n"
+//                    var etext = self.messages.text;
+//                    self.messages.text =  text + "\n"
 //                    self.messagesText.text = (self.messagesText.text ?? "") + text + "\n"
 //                    self.messagesText.numberOfLines = +1
-                    self.messages.text =  etext! + text + "\n"
-                    var myText = self.messages.text;
-                    var a = 1;
+//                    self.messages.text =  etext! + text + "\n"
+//                    var myText = self.messages.text;
+//                    var a = 1;
                 }
             }
         }
@@ -82,7 +82,7 @@ class ViewController: UIViewController {
     }
     
     func sendFirstMessage(){
-        ws.send("nearhop_ios")
+        //ws.send("nearhop_ios")
     }
 }
 

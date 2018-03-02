@@ -42,7 +42,7 @@ public class MainActivity extends NHActivity {
     }
 
     public void sendFirstMessage() {
-        mWebSocketClient.send("nearhop_android");
+        //mWebSocketClient.send("nearhop_android");
     }
 
     public void sendMessage() {
@@ -52,14 +52,14 @@ public class MainActivity extends NHActivity {
             return;
         }
         mWebSocketClient.send(textToSend);
-        messagesView.setText(messagesView.getText() + "\n" +"CLIENT : " + textToSend);
+        messagesView.setText(messagesView.getText() + "\n"  + textToSend);
         sendingText.setText("");
     }
 
     private void connectWebSocket() {
         URI uri;
         try {
-            uri = new URI("ws://192.168.2.102:5857");
+            uri = new URI("ws://52.24.146.124:5857");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -69,7 +69,7 @@ public class MainActivity extends NHActivity {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
 //                mWebSocketClient.send("HI");
-//                messagesView.setText( "CLIENT : HI");
+                messagesView.setText( "Connected");
                 sendFirstMessage();
             }
 
@@ -79,7 +79,7 @@ public class MainActivity extends NHActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        messagesView.setText(messagesView.getText() + "\n" + "SERVER : " +message);
+                        messagesView.setText(messagesView.getText() + "\n" + message);
                     }
                 });
             }

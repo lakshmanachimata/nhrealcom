@@ -21,10 +21,10 @@ wss.on('connection', function connection(ws, req) {
     const location = url.parse(req.url, true);
     connections.set( ws._socket.remoteAddress,ws)
     if (ws1 == undefined) {
-        console.log("setting ws1")
+        console.log("setting ws1    " + ws._socket.remoteAddress)
         ws1 = ws
     } else if (ws2 == undefined) {
-        console.log("setting ws2")
+        console.log("setting ws2    " + ws._socket.remoteAddress)
         ws2 = ws
     } // You might use location.query.access_token to authenticate or share sessions
 
@@ -33,7 +33,6 @@ wss.on('connection', function connection(ws, req) {
     ws.on('message', function incoming(message) {
         // var ws = connections.get(ws._socket.remoteAddress)
         if (ws1 != undefined && ws2 != undefined && ws._socket.remoteAddress == ws1._socket.remoteAddress) {
-
             ws2.send(message)
         }
         if (ws2 != undefined && ws1 != undefined && ws._socket.remoteAddress == ws2._socket.remoteAddress) {
