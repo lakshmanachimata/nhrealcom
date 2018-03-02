@@ -20,6 +20,9 @@ class ViewController: UIViewController {
         let ctap = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
         view.addGestureRecognizer(ctap)
         openWebSokcet();
+        let stap = UITapGestureRecognizer(target: self, action: #selector(ViewController.sendMessageFromClient))
+        sendMe.isUserInteractionEnabled = true
+        sendMe.addGestureRecognizer(stap)
         
     }
         // Do any additional setup after loading the view, typically from a nib.
@@ -37,10 +40,13 @@ class ViewController: UIViewController {
     func openWebSokcet(){
         ws = WebSocket("ws://192.168.2.102:5857")
         ws.event.open = {
-            print("opened")
-            let when = DispatchTime.now() + 1
-            DispatchQueue.global().asyncAfter(deadline: when) {
-                self.sendMessage(msg : "Hi from iOS");
+            let when1 = DispatchTime.now() + 0.001
+            DispatchQueue.main.asyncAfter(deadline: when1) {
+                self.messagesText.text = "Hi\n";
+            }
+            let when2 = DispatchTime.now() + 1
+            DispatchQueue.main.asyncAfter(deadline: when2) {
+                self.sendMessageFromClient();
             }
         }
         ws.event.close = { code, reason, clean in
@@ -51,12 +57,23 @@ class ViewController: UIViewController {
         }
         ws.event.message = { message in
             if let text = message as? String {
-                print("recv: \(text)")
+                let when = DispatchTime.now() + 0.001
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.messagesText.text =  self.messagesText.text! + text + "\n"
+                    var myText = self.messagesText.text;
+                    var a = 1;
+                }
             }
         }
     }
-    func sendMessage(msg : String){
-        ws.send(msg)
+    @objc func sendMessageFromClient(){
+        let when = DispatchTime.now() + 0.001
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            var enteredText =  self.sendMessage.text;
+            self.messagesText.text =  self.messagesText.text! + enteredText! + "\n"
+            self.sendMessage.text = ""
+        }
+        ws.send(self.sendMessage.text)
     }
 }
 
