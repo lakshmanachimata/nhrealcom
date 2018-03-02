@@ -40,8 +40,7 @@ class ViewController: UIViewController {
     func openWebSokcet(){
         ws = WebSocket("ws://192.168.2.102:5857")
         ws.event.open = {
-            let when1 = DispatchTime.now() + 0.001
-            DispatchQueue.main.asyncAfter(deadline: when1) {
+            DispatchQueue.main.async() {
                 self.messagesText.text = "Hi\n";
             }
             let when2 = DispatchTime.now() + 1
@@ -57,8 +56,7 @@ class ViewController: UIViewController {
         }
         ws.event.message = { message in
             if let text = message as? String {
-                let when = DispatchTime.now() + 0.001
-                DispatchQueue.main.asyncAfter(deadline: when) {
+                DispatchQueue.main.async() {
                     self.messagesText.text =  self.messagesText.text! + text + "\n"
                     var myText = self.messagesText.text;
                     var a = 1;
@@ -67,8 +65,7 @@ class ViewController: UIViewController {
         }
     }
     @objc func sendMessageFromClient(){
-        let when = DispatchTime.now() + 0.001
-        DispatchQueue.main.asyncAfter(deadline: when) {
+        DispatchQueue.main.async() {
             var enteredText =  self.sendMessage.text;
             self.messagesText.text =  self.messagesText.text! + enteredText! + "\n"
             self.sendMessage.text = ""
