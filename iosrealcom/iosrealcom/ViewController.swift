@@ -11,7 +11,7 @@ import SwiftWebSocket
 
 class ViewController: UIViewController {
 
- 
+    var ws : WebSocket!
     @IBOutlet weak var messagesText: UILabel!
     @IBOutlet weak var sendMessage: UITextField!
     @IBOutlet weak var sendMe: UIButton!
@@ -19,7 +19,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let ctap = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
         view.addGestureRecognizer(ctap)
-        echoTest();
+        openWebSokcet();
+        
     }
         // Do any additional setup after loading the view, typically from a nib.
 
@@ -33,18 +34,14 @@ class ViewController: UIViewController {
         view.endEditing(true)
     }
     
-    func echoTest(){
-        var messageNum = 0
-        let ws = WebSocket("ws://192.168.1.4:5857")
-        let send : ()->() = {
-            messageNum += 1
-            let msg = "\(messageNum): \(NSDate().description)"
-            print("send: \(msg)")
-            ws.send(msg)
-        }
+    func openWebSokcet(){
+        ws = WebSocket("ws://192.168.2.102:5857")
         ws.event.open = {
             print("opened")
-            send()
+            let when = DispatchTime.now() + 1
+            DispatchQueue.global().asyncAfter(deadline: when) {
+                self.sendMessage(msg : "Hi from iOS");
+            }
         }
         ws.event.close = { code, reason, clean in
             print("close")
@@ -55,16 +52,11 @@ class ViewController: UIViewController {
         ws.event.message = { message in
             if let text = message as? String {
                 print("recv: \(text)")
-                if messageNum == 10 {
-                    ws.close()
-                } else {
-                    send()
-                }
             }
         }
     }
-    
-    
-
+    func sendMessage(msg : String){
+        ws.send(msg)
+    }
 }
 
