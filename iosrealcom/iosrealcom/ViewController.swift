@@ -60,14 +60,7 @@ class ViewController: UIViewController {
         ws.event.message = { message in
             if let text = message as? String {
                 DispatchQueue.main.async() {
-//                    self.messagesText.text =  self.messagesText.text! + text + "\n"
-//                    var etext = self.messages.text;
-//                    self.messages.text =  text + "\n"
-//                    self.messagesText.text = (self.messagesText.text ?? "") + text + "\n"
-//                    self.messagesText.numberOfLines = +1
-//                    self.messages.text =  etext! + text + "\n"
-//                    var myText = self.messages.text;
-//                    var a = 1;
+                    self.messages.text =  self.messages.text! + text + "\n"
                 }
             }
         }
